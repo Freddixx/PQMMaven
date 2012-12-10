@@ -1,0 +1,12 @@
+Tests:
+
+1. Mininum 10 data sets
+2. Maximum 999 data sets
+3. File not null
+4. Value not negative
+5. Value is double
+6. Tendency is double
+7. Name max 255 chars
+8. Index max 100 chars
+9. Reading takes 10 sec maximum
+10. Processing takes 10 sec maximum
