@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Built-By: Fred
-Build-Jdk: 1.7.0_09
-Class-Path: lib/opencsv-2.0.jar
-Main-Class: org.bht.politz.App
-Created-By: Maven Integration for Eclipse
-
