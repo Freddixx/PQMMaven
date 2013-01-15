@@ -1,0 +1,142 @@
+diff --git a/pom.xml b/pom.xml
+index 094ab8e..44f9604 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -4,7 +4,7 @@
+   <groupId>org.bht.politz</groupId>
+   <artifactId>PQMCSV</artifactId>
+   <packaging>jar</packaging>
+-  <version>1.0-SNAPSHOT</version>
++  <version>7.0-SNAPSHOT</version>
+   <name>PQMCSV</name>
+   <url>http://maven.apache.org</url>
+   <scm>
+@@ -79,6 +79,58 @@
+ 	          </archive>
+ 	        </configuration>
+       </plugin>
+-  	</plugins>
++      <plugin>
++        <groupId>org.codehaus.mojo</groupId>
++        <artifactId>cobertura-maven-plugin</artifactId>
++        <version>2.5.2</version>
++        <configuration>
++          <instrumentation>
++          	<ignores>
++	        	<ignore>org.bht.politz.documentation.*</ignore>
++	        	<ignore>org.bht.politz.documentation</ignore>
++	        </ignores>
++          </instrumentation>
++          <check>
++            <branchRate>85</branchRate>
++            <lineRate>85</lineRate>
++            <haltOnFailure>true</haltOnFailure>
++            <totalBranchRate>85</totalBranchRate>
++            <totalLineRate>85</totalLineRate>
++            <packageLineRate>85</packageLineRate>
++            <packageBranchRate>85</packageBranchRate>
++            <regexes>
++              <regex>
++                <pattern>org.bht.politz.*</pattern>
++                <branchRate>90</branchRate>
++                <lineRate>80</lineRate>
++              </regex>
++            </regexes>
++          </check>
++        </configuration>
++        <executions>
++          <execution>
++            <goals>
++              <goal>clean</goal>
++              <goal>check</goal>
++            </goals>
++          </execution>
++        </executions>
++      </plugin>
++  	</plugins>   
+   </build>
++  <reporting>
++      <plugins>
++      	<plugin>
++	        <groupId>org.codehaus.mojo</groupId>
++	        <artifactId>cobertura-maven-plugin</artifactId>
++	        <version>2.5.2</version>
++	        <configuration>
++	        <formats>
++	           <format>html</format>
++	           <format>xml</format>
++	        </formats>
++        </configuration>
++      	</plugin>
++      </plugins>
++  </reporting>
+ </project>
+diff --git a/src/test/java/org/bht/politz/AppTest.java b/src/test/java/org/bht/politz/AppTest.java
+index 3aac470..3c35484 100644
+--- a/src/test/java/org/bht/politz/AppTest.java
++++ b/src/test/java/org/bht/politz/AppTest.java
+@@ -1,5 +1,7 @@
+ package org.bht.politz;
+ 
++import java.io.IOException;
++
+ import junit.framework.Test;
+ import junit.framework.TestCase;
+ import junit.framework.TestSuite;
+@@ -10,6 +12,7 @@ import junit.framework.TestSuite;
+ public class AppTest 
+     extends TestCase
+ {
++	
+     /**
+      * Create the test case
+      *
+@@ -19,7 +22,7 @@ public class AppTest
+     {
+         super( testName );
+     }
+-
++    
+     /**
+      * @return the suite of tests being tested
+      */
+@@ -30,9 +33,37 @@ public class AppTest
+ 
+     /**
+      * Rigourous Test :-)
++     * @throws IOException 
+      */
+-    public void testApp()
++    public void testApp() throws IOException
+     {
+-        assertTrue( true );
++    	long d = System.currentTimeMillis();
++        // Test that reading and processing takes less 10 secs
++    	App.main(new String[0]);
++        assertTrue(System.currentTimeMillis() - d < 10000);
++    }
++    
++    public void testLongIndex() {
++    	// Test that the class flawlessly accepts index names with 255 chars
++        String longIndex100 = "longindexnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelongindexnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
++        Share s = new Share("DE1000", "ADAC", 64.27, 1.24);
++        s.setIndex(longIndex100);
++        assertTrue(s.getIndex().equals(longIndex100));	
++    }
++    
++    public void testLongName() {
++    	// Test that the class flawlessly accepts index names with 255 chars
++    	String longName255 = "longindexnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelongindexnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelongindexnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelongindexnameeeeeeeeeeeeeee";
++        Share s = new Share("DE1000", "ADAC", 64.27, 1.24);
++        s.setName(longName255);
++        assertTrue(s.getName().equals(longName255));	
++    }
++    
++    public void testGettersSetters() {
++    	Share s = new Share("DE1000", "ADAC", 64.27, 1.24);
++    	s.setTendency(1.25);
++    	assertTrue(s.getTendency() == 1.25);
++    	s.setValue(65.00);
++    	assertTrue(s.getValue() == 65.00);
+     }
+ }
